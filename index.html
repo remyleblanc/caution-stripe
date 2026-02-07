@@ -1,12 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Empreinte bancaire</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body{font-family:Arial;background:#f6f6f6;display:flex;justify-content:center;align-items:center;height:100vh}
+    .box{background:#fff;padding:28px;max-width:420px;border-radius:10px;text-align:center}
+    button{background:#635bff;color:#fff;border:0;padding:14px 18px;font-size:16px;border-radius:8px;cursor:pointer}
+    p{color:#555;font-size:14px}
+  </style>
 </head>
 <body>
-  <h1>Empreinte bancaire</h1>
-  <p>Page en cours d’installation.</p>
+  <div class="box">
+    <h2>Empreinte bancaire</h2>
+    <p>Aucun débit immédiat.<br>La carte est demandée à titre de garantie uniquement.</p>
+    <button id="checkout-button">Enregistrer ma carte bancaire</button>
+  </div>
+
+  <script>
+    // 🔑 CLÉ PUBLIQUE UNIQUEMENT
+    const stripe = Stripe("pk_live_51SBVzlDhrarnXiEhNegssoknocKyMu6ZeYOLVhyfCM8156RZKYkyJUbdO7rCKwAyykkX8GJWlHn7WhEuuOf3h1ap00x6rL9QFh");
+
+    // 🌐 URL Railway qui affiche "OK"
+    const BACKEND = "https://nodejs-production-8f49.up.railway.app";
+
+    document.getElementById("checkout-button").addEventListener("click", async () => {
+      const r = await fetch(`${BACKEND}/create-setup-session`, { method: "POST" });
+      const data = await r.json();
+      if (data.error) return alert(data.error);
+      await stripe.redirectToCheckout({ sessionId: data.id });
+    });
+  </script>
 </body>
 </html>
