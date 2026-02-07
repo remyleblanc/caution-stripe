@@ -20,18 +20,26 @@
   </div>
 
   <script>
-    // 🔑 CLÉ PUBLIQUE UNIQUEMENT
-    const stripe = Stripe("pk_live_51SBVzlDhrarnXiEhNegssoknocKyMu6ZeYOLVhyfCM8156RZKYkyJUbdO7rCKwAyykkX8GJWlHn7WhEuuOf3h1ap00x6rL9QFh");
+  const stripe = Stripe("pk_live_51SBVzlDhrarnXiEhNegssoknocKyMu6ZeYOLVhyfCM8156RZKYkyJUbd07rCKwAyykkX8GJWlHn7WhEuuOf3h1ap00x6rL9QFh");
+  const BACKEND = "https://nodejs-production-8f49.up.railway.app";
 
-    // 🌐 URL Railway qui affiche "OK"
-    const BACKEND = "https://nodejs-production-8f49.up.railway.app";
+  document.getElementById("checkout-button").addEventListener("click", async () => {
+    alert("clic OK"); // ✅ on veut voir ça
 
-    document.getElementById("checkout-button").addEventListener("click", async () => {
+    try {
       const r = await fetch(`${BACKEND}/create-setup-session`, { method: "POST" });
+      alert("statut backend: " + r.status); // ✅ on veut voir un code (200/500/etc)
+
       const data = await r.json();
-      if (data.error) return alert(data.error);
+      alert("réponse: " + JSON.stringify(data)); // ✅ on veut voir l'erreur ou l'id
+
+      if (data.error) return alert("ERREUR: " + data.error);
+
       await stripe.redirectToCheckout({ sessionId: data.id });
-    });
-  </script>
+    } catch (e) {
+      alert("FETCH BLOQUÉ: " + e.message);
+    }
+  });
+</script>
 </body>
 </html>
